@@ -16,6 +16,8 @@ import {
   X
 } from 'lucide-react';
 
+import myImage from "./assets/cropped-IMG_5897_1.jpg"
+
 function App() {
   const [activeSection, setActiveSection] = useState('home');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -254,7 +256,7 @@ function App() {
         <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
             <img
-              src="/cropped-IMG_5897_1.jpg"
+              src={myImage}
               alt="Profile"
               className="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-blue-400 shadow-2xl object-cover object-center"
             />
