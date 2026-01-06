@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   Github, 
   Linkedin, 
@@ -23,7 +23,7 @@ function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [typedText, setTypedText] = useState('');
   
-  const fullText = "Data Scientist";
+  const fullText = "Senior Data Scientist";
   
   // Add state for contact form validation
   const [formErrors, setFormErrors] = useState<{ name?: string; email?: string; message?: string }>({});
@@ -34,6 +34,10 @@ function App() {
   const [yearsCount, setYearsCount] = useState(0);
   const [aboutAnimated, setAboutAnimated] = useState(false);
   const aboutRef = useRef<HTMLDivElement>(null);
+  
+  // Add state for interactive elements
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [hoveredSkill, setHoveredSkill] = useState<number | null>(null);
 
   useEffect(() => {
     let i = 0;
@@ -66,7 +70,7 @@ function App() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['home', 'about', 'skills', 'projects', 'experience', 'contact'];
+      const sections = ['home', 'about', 'playbook', 'experience', 'skills', 'projects', 'contact'];
       const scrollPosition = window.scrollY + 100;
 
       for (const section of sections) {
@@ -128,6 +132,15 @@ function App() {
     };
   }, [aboutAnimated]);
 
+  // Mouse position tracker for parallax effect
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   const scrollTo = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -146,14 +159,6 @@ function App() {
     document.body.removeChild(link);
   };
 
-  const skills = [
-    { name: 'Python/R', level: 95 },
-    { name: 'Machine Learning', level: 90 },
-    { name: 'Data Analysis', level: 90 },
-    { name: 'TensorFlow/PyTorch', level: 85 },
-    { name: 'SQL/NoSQL', level: 85 },
-    { name: 'Data Visualization', level: 80 }
-  ];
 
   const projects = [
     {
@@ -196,7 +201,7 @@ function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-950 to-black text-white">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-lg border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -207,12 +212,12 @@ function App() {
             
             {/* Desktop Navigation */}
             <div className="hidden md:flex space-x-8">
-              {['Home', 'About', 'Skills', 'Projects', 'Experience', 'Contact'].map((item) => (
+              {['Home', 'About', 'My Playbook', 'Experience', 'Skills', 'Projects', 'Contact'].map((item) => (
                 <button
                   key={item}
-                  onClick={() => scrollTo(item.toLowerCase())}
+                  onClick={() => scrollTo(item === 'My Playbook' ? 'playbook' : item.toLowerCase())}
                   className={`transition-colors duration-300 ${
-                    activeSection === item.toLowerCase()
+                    activeSection === (item === 'My Playbook' ? 'playbook' : item.toLowerCase())
                       ? 'text-blue-400'
                       : 'text-gray-300 hover:text-white'
                   }`}
@@ -236,10 +241,10 @@ function App() {
         {isMenuOpen && (
           <div className="md:hidden bg-gray-900 border-t border-gray-800">
             <div className="px-4 py-2 space-y-2">
-              {['Home', 'About', 'Skills', 'Projects', 'Experience', 'Contact'].map((item) => (
+              {['Home', 'About', 'My Playbook', 'Experience', 'Skills', 'Projects', 'Contact'].map((item) => (
                 <button
                   key={item}
-                  onClick={() => scrollTo(item.toLowerCase())}
+                  onClick={() => scrollTo(item === 'My Playbook' ? 'playbook' : item.toLowerCase())}
                   className="block w-full text-left py-2 text-gray-300 hover:text-white transition-colors duration-300"
                 >
                   {item}
@@ -252,13 +257,34 @@ function App() {
 
       {/* Hero Section */}
       <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-teal-900/20"></div>
+        {/* Animated background with mouse parallax */}
+        <div 
+          className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-teal-900/20"
+          style={{
+            transform: `translate(${(mousePosition.x - window.innerWidth / 2) * 0.02}px, ${(mousePosition.y - window.innerHeight / 2) * 0.02}px)`
+          }}
+        ></div>
+        {/* Floating particles effect */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-blue-400 rounded-full opacity-30"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animation: `float ${5 + Math.random() * 10}s infinite ease-in-out`,
+                animationDelay: `${Math.random() * 5}s`
+              }}
+            />
+          ))}
+        </div>
         <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
             <img
               src={myImage}
               alt="Profile"
-              className="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-blue-400 shadow-2xl object-cover object-center"
+              className="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-blue-400 shadow-2xl object-cover object-center hover:scale-110 transition-transform duration-500 cursor-pointer"
             />
           </div>
           
@@ -309,54 +335,63 @@ function App() {
             <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-teal-600 mx-auto"></div>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h3 className="text-2xl font-semibold mb-6 text-gray-100">
-                Transforming Data into Insights
-              </h3>
-              <p className="text-gray-300 mb-6 leading-relaxed">
-                With over 4 years of experience in data science and machine learning, I specialize in 
-                developing intelligent solutions that drive business value. My expertise spans from 
-                customer support automation to predictive analytics, helping organizations make 
-                data-driven decisions.
+          <div className="space-y-12">
+            {/* Opening Statement */}
+            <div className="bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-teal-600/10 rounded-2xl p-8 border border-blue-500/30 backdrop-blur-sm">
+              <p className="text-gray-100 text-xl leading-relaxed font-medium text-center">
+                Most data and AI projects fail not because of model performance, but because they never make it to <span className="text-blue-400 font-semibold">reliable, scalable production</span>. I focus on closing that gap.
               </p>
-              <p className="text-gray-300 mb-6 leading-relaxed">
-                I'm passionate about leveraging cutting-edge ML techniques to solve complex problems 
-                and optimize operational efficiency. When I'm not building models, you can find me 
-                exploring new algorithms, contributing to open-source projects, or sharing knowledge 
-                with the data science community.
-              </p>
-              
-              <div className="grid grid-cols-2 gap-6 mt-8">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-blue-400 mb-2">{modelsCount}+</div>
-                  <div className="text-gray-400">ML Models Deployed</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-teal-400 mb-2">{yearsCount}+</div>
-                  <div className="text-gray-400">Years Experience</div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <h3 className="text-2xl font-semibold mb-6 text-gray-100">
+                  Transforming Data into Insights
+                </h3>
+                <p className="text-gray-300 mb-6 leading-relaxed">
+                  With over 4 years of experience in data science and machine learning, I specialize in 
+                  developing intelligent solutions that drive business value. My expertise spans from 
+                  customer support automation to predictive analytics, helping organizations make 
+                  data-driven decisions.
+                </p>
+                <p className="text-gray-300 mb-6 leading-relaxed">
+                  I'm passionate about leveraging cutting-edge ML techniques to solve complex problems 
+                  and optimize operational efficiency. When I'm not building models, you can find me 
+                  exploring new algorithms, contributing to open-source projects, or sharing knowledge 
+                  with the data science community.
+                </p>
+                
+                <div className="grid grid-cols-2 gap-6 mt-8">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-blue-400 mb-2">{modelsCount}+</div>
+                    <div className="text-gray-400">ML Models Deployed</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-teal-400 mb-2">{yearsCount}+</div>
+                    <div className="text-gray-400">Years Experience</div>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="relative">
-              <div className="bg-gradient-to-r from-blue-600/20 to-teal-600/20 rounded-2xl p-8 backdrop-blur-lg border border-gray-700">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <User className="text-blue-400" size={20} />
-                    <span className="text-gray-300">Data Scientist</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <GraduationCap className="text-teal-400" size={20} />
-                    <span className="text-gray-300">Computer Science Graduate</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <MapPin className="text-purple-400" size={20} />
-                    <span className="text-gray-300">New York City, NY</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Briefcase className="text-orange-400" size={20} />
-                    <span className="text-gray-300">Available for new opportunities</span>
+              
+              <div className="relative">
+                <div className="bg-gradient-to-r from-blue-600/20 to-teal-600/20 rounded-2xl p-8 backdrop-blur-lg border border-gray-700">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <User className="text-blue-400" size={20} />
+                      <span className="text-gray-300">Data Scientist</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <GraduationCap className="text-teal-400" size={20} />
+                      <span className="text-gray-300">Computer Science Graduate</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <MapPin className="text-purple-400" size={20} />
+                      <span className="text-gray-300">New York City, NY</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Briefcase className="text-orange-400" size={20} />
+                      <span className="text-gray-300">Available for new opportunities</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -365,8 +400,115 @@ function App() {
         </div>
       </section>
 
+      {/* Philosophy Section */}
+      <section id="playbook" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-800/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-teal-400 bg-clip-text text-transparent">
+              My Playbook
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-teal-600 mx-auto"></div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 items-stretch">
+            {/* Left Column: Philosophy & Approach */}
+            <div className="space-y-8 flex flex-col">
+              {/* Patterns Section */}
+              <div className="bg-gray-900/60 rounded-xl p-6 border border-gray-700 hover:border-blue-500/50 transition-all duration-300">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-1 h-8 bg-gradient-to-b from-blue-400 to-teal-400 rounded-full"></div>
+                  <h3 className="text-2xl font-semibold text-gray-100">
+                    Patterns I've Learned
+                  </h3>
+                </div>
+                <p className="text-gray-300 mb-6 leading-relaxed text-sm">
+                  Over the past several years working across financial services, enterprise operations, and AI/ML infrastructure, I've learned a few patterns:
+                </p>
+                  <ul className="text-gray-300 leading-relaxed space-y-3 list-none">
+                    <li className="flex items-start group">
+                      <span className="text-blue-400 mr-3 mt-1 font-bold group-hover:text-teal-400 transition-colors">→</span>
+                      <span className="flex-1">The biggest wins come from solving <span className="text-blue-400 font-medium">unglamorous, high-ROI problems</span></span>
+                    </li>
+                    <li className="flex items-start group">
+                      <span className="text-blue-400 mr-3 mt-1 font-bold group-hover:text-teal-400 transition-colors">→</span>
+                      <span className="flex-1">LLM success depends more on <span className="text-blue-400 font-medium">data pipelines, evaluation frameworks, and guardrails</span> than the model itself</span>
+                    </li>
+                    <li className="flex items-start group">
+                      <span className="text-blue-400 mr-3 mt-1 font-bold group-hover:text-teal-400 transition-colors">→</span>
+                      <span className="flex-1">Automation breaks without <span className="text-blue-400 font-medium">reliable monitoring, versioning, and ground truth</span></span>
+                    </li>
+                    <li className="flex items-start group">
+                      <span className="text-blue-400 mr-3 mt-1 font-bold group-hover:text-teal-400 transition-colors">→</span>
+                      <span className="flex-1">Organizations need systems that <span className="text-blue-400 font-medium">reduce noise</span>, not dashboards that create more questions</span>
+                    </li>
+                  </ul>
+                  <div className="mt-6 pt-4 border-t border-gray-700">
+                    <p className="text-gray-100 text-lg font-semibold text-center bg-gradient-to-r from-blue-400 to-teal-400 bg-clip-text text-transparent">
+                      I build those systems.
+                    </p>
+                  </div>
+              </div>
+
+              {/* How I Work Section */}
+              <div className="bg-gray-900/60 rounded-xl p-6 border border-gray-700 hover:border-teal-500/50 transition-all duration-300">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-1 h-8 bg-gradient-to-b from-teal-400 to-cyan-400 rounded-full"></div>
+                  <h3 className="text-2xl font-semibold text-gray-100">
+                    How I Work
+                  </h3>
+                </div>
+                <p className="text-gray-300 leading-relaxed">
+                  I bridge <span className="text-teal-400 font-medium">engineering depth</span> with <span className="text-teal-400 font-medium">business pragmatism</span>. I translate messy operational problems into <span className="text-teal-400 font-medium">clear datasets, clear metrics, and clear solutions</span>—so teams can actually make decisions, not just generate dashboards. My focus is always: <span className="text-teal-400 font-medium">measurable impact, reliability, and systems that scale</span>.
+                </p>
+              </div>
+            </div>
+
+            {/* Right Column: Experience & Credentials */}
+            <div className="flex">
+              {/* What I Bring Section */}
+              <div className="bg-gray-900/60 rounded-xl p-6 border border-gray-700 hover:border-purple-500/50 transition-all duration-300 w-full flex flex-col">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-1 h-8 bg-gradient-to-b from-purple-400 to-pink-400 rounded-full"></div>
+                  <h3 className="text-2xl font-semibold text-gray-100">
+                    What I Bring
+                  </h3>
+                </div>
+                <p className="text-gray-300 mb-4 leading-relaxed">
+                  I've designed and deployed <span className="text-purple-400 font-medium">production-grade ML and LLM pipelines</span> that support thousands of users and millions of data points—from multimodal call-intent analytics processing <span className="text-purple-400 font-medium">10,000+ calls per month</span> to anomaly detection platforms that cut triage time by <span className="text-purple-400 font-medium">hours per incident</span>. I specialize in turning raw, messy data into structured, actionable insights that directly improve operations and customer experience.
+                </p>
+                <p className="text-gray-300 mb-4 leading-relaxed font-medium">
+                  My work spans:
+                </p>
+                <ul className="text-gray-300 leading-relaxed space-y-2.5 flex-grow">
+                  <li className="flex items-start">
+                    <span className="text-purple-400 mr-3 mt-1.5">•</span>
+                    <span>End-to-end ML/LLM pipelines (ingestion → modeling → evaluation → deployment)</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-purple-400 mr-3 mt-1.5">•</span>
+                    <span>Building classification systems, anomaly detection engines, and supervised+LLM hybrid workflows</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-purple-400 mr-3 mt-1.5">•</span>
+                    <span>Designing evaluation frameworks that benchmark 20+ prompts and reduce costs</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-purple-400 mr-3 mt-1.5">•</span>
+                    <span>Data infrastructure modernization (GCP, BigQuery, CI/CD, monitoring)</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-purple-400 mr-3 mt-1.5">•</span>
+                    <span>Owning projects from 0→1 in ambiguous environments</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Experience Section */}
-      <section id="experience" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-800/50">
+      <section id="experience" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-teal-400 bg-clip-text text-transparent">
@@ -417,64 +559,100 @@ function App() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
             {/* Skill Card: Python/R */}
-            <div className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-blue-600/30 transition-shadow duration-300">
-              <Code2 className="text-blue-400 mb-4" size={40} />
+            <div 
+              className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-blue-600/30 transition-all duration-300 transform hover:scale-105 hover:-translate-y-2"
+              onMouseEnter={() => setHoveredSkill(0)}
+              onMouseLeave={() => setHoveredSkill(null)}
+            >
+              <Code2 className={`${hoveredSkill === 0 ? 'animate-bounce' : ''} text-blue-400 mb-4 transition-transform duration-300`} size={40} />
               <h3 className="font-semibold text-xl text-gray-100 mb-2">Python / R</h3>
               <p className="text-gray-400 text-sm mb-2 text-center">Advanced programming in Python and R for data science, automation, and analytics.</p>
             </div>
 
             {/* Skill Card: Machine Learning */}
-            <div className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-blue-600/30 transition-shadow duration-300">
-              <Code2 className="text-purple-400 mb-4" size={40} />
+            <div 
+              className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-purple-600/30 transition-all duration-300 transform hover:scale-105 hover:-translate-y-2"
+              onMouseEnter={() => setHoveredSkill(1)}
+              onMouseLeave={() => setHoveredSkill(null)}
+            >
+              <Code2 className={`${hoveredSkill === 1 ? 'animate-bounce' : ''} text-purple-400 mb-4 transition-transform duration-300`} size={40} />
               <h3 className="font-semibold text-xl text-gray-100 mb-2">Machine Learning</h3>
               <p className="text-gray-400 text-sm mb-2 text-center">Building, training, and deploying ML models using TensorFlow, PyTorch, and Scikit-learn.</p>
             </div>
 
             {/* Skill Card: Large Language Models (LLMs) */}
-            <div className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-blue-600/30 transition-shadow duration-300">
-              <GraduationCap className="text-purple-400 mb-4" size={40} />
+            <div 
+              className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-purple-600/30 transition-all duration-300 transform hover:scale-105 hover:-translate-y-2"
+              onMouseEnter={() => setHoveredSkill(2)}
+              onMouseLeave={() => setHoveredSkill(null)}
+            >
+              <GraduationCap className={`${hoveredSkill === 2 ? 'animate-bounce' : ''} text-purple-400 mb-4 transition-transform duration-300`} size={40} />
               <h3 className="font-semibold text-xl text-gray-100 mb-2">Large Language Models (LLMs)</h3>
               <p className="text-gray-400 text-sm mb-2 text-center">Experience with fine-tuning, deploying, and evaluating LLMs like GPT, Llama, and open-source models for NLP tasks.</p>
             </div>
 
             {/* Skill Card: Prompt Engineering */}
-            <div className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-blue-600/30 transition-shadow duration-300">
-              <User className="text-blue-400 mb-4" size={40} />
-              <h3 className="font-semibold text-xl text-gray-100 mb-2">Prompt Engineering</h3>
+            <div 
+              className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-blue-600/30 transition-all duration-300 transform hover:scale-105 hover:-translate-y-2"
+              onMouseEnter={() => setHoveredSkill(3)}
+              onMouseLeave={() => setHoveredSkill(null)}
+            >
+              <User className={`${hoveredSkill === 3 ? 'animate-bounce' : ''} text-blue-400 mb-4 transition-transform duration-300`} size={40} />
+              <h3 className="font-semibold text-xl text-white mb-2">Prompt Engineering</h3>
               <p className="text-gray-400 text-sm mb-2 text-center">Designing effective prompts and evaluation strategies to optimize LLM outputs for real-world applications.</p>
             </div>
 
             {/* Skill Card: Generative AI Applications */}
-            <div className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-blue-600/30 transition-shadow duration-300">
-              <ExternalLink className="text-teal-400 mb-4" size={40} />
+            <div 
+              className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-teal-600/30 transition-all duration-300 transform hover:scale-105 hover:-translate-y-2"
+              onMouseEnter={() => setHoveredSkill(4)}
+              onMouseLeave={() => setHoveredSkill(null)}
+            >
+              <ExternalLink className={`${hoveredSkill === 4 ? 'animate-bounce' : ''} text-teal-400 mb-4 transition-transform duration-300`} size={40} />
               <h3 className="font-semibold text-xl text-gray-100 mb-2">Generative AI Applications</h3>
               <p className="text-gray-400 text-sm mb-2 text-center">Building chatbots, content generators, and creative tools using GenAI and transformer-based architectures.</p>
             </div>
 
             {/* Skill Card: Deep Learning Frameworks */}
-            <div className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-blue-600/30 transition-shadow duration-300">
-              <GraduationCap className="text-blue-400 mb-4" size={40} />
+            <div 
+              className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-blue-600/30 transition-all duration-300 transform hover:scale-105 hover:-translate-y-2"
+              onMouseEnter={() => setHoveredSkill(5)}
+              onMouseLeave={() => setHoveredSkill(null)}
+            >
+              <GraduationCap className={`${hoveredSkill === 5 ? 'animate-bounce' : ''} text-blue-400 mb-4 transition-transform duration-300`} size={40} />
               <h3 className="font-semibold text-xl text-gray-100 mb-2">TensorFlow / PyTorch</h3>
               <p className="text-gray-400 text-sm mb-2 text-center">Hands-on with deep learning frameworks for neural networks and AI solutions.</p>
             </div>
 
             {/* Skill Card: Databases */}
-            <div className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-blue-600/30 transition-shadow duration-300">
-              <Briefcase className="text-orange-400 mb-4" size={40} />
+            <div 
+              className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-orange-600/30 transition-all duration-300 transform hover:scale-105 hover:-translate-y-2"
+              onMouseEnter={() => setHoveredSkill(6)}
+              onMouseLeave={() => setHoveredSkill(null)}
+            >
+              <Briefcase className={`${hoveredSkill === 6 ? 'animate-bounce' : ''} text-orange-400 mb-4 transition-transform duration-300`} size={40} />
               <h3 className="font-semibold text-xl text-gray-100 mb-2">SQL / NoSQL</h3>
               <p className="text-gray-400 text-sm mb-2 text-center">Designing and managing SQL/NoSQL databases for scalable data storage and retrieval.</p>
             </div>
 
             {/* Skill Card: MLOps & Model Deployment */}
-            <div className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-blue-600/30 transition-shadow duration-300">
-              <Download className="text-blue-400 mb-4" size={40} />
-              <h3 className="font-semibold text-xl text-gray-100 mb-2">MLOps & Model Deployment</h3>
+            <div 
+              className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-blue-600/30 transition-all duration-300 transform hover:scale-105 hover:-translate-y-2"
+              onMouseEnter={() => setHoveredSkill(7)}
+              onMouseLeave={() => setHoveredSkill(null)}
+            >
+              <Download className={`${hoveredSkill === 7 ? 'animate-bounce' : ''} text-blue-400 mb-4 transition-transform duration-300`} size={40} />
+              <h3 className="font-semibold text-xl text-white mb-2">MLOps & Model Deployment</h3>
               <p className="text-gray-400 text-sm mb-2 text-center">Experience with CI/CD, Docker, cloud platforms, and deploying ML models to production environments.</p>
             </div>
 
             {/* Skill Card: Data Engineering & Pipelines */}
-            <div className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-blue-600/30 transition-shadow duration-300">
-              <Code2 className="text-teal-400 mb-4" size={40} />
+            <div 
+              className="bg-gray-900/60 rounded-2xl p-8 border border-gray-700 flex flex-col items-center shadow-lg hover:shadow-teal-600/30 transition-all duration-300 transform hover:scale-105 hover:-translate-y-2"
+              onMouseEnter={() => setHoveredSkill(8)}
+              onMouseLeave={() => setHoveredSkill(null)}
+            >
+              <Code2 className={`${hoveredSkill === 8 ? 'animate-bounce' : ''} text-teal-400 mb-4 transition-transform duration-300`} size={40} />
               <h3 className="font-semibold text-xl text-gray-100 mb-2">Data Engineering & Pipelines</h3>
               <p className="text-gray-400 text-sm mb-2 text-center">Building robust ETL pipelines, data integration, and workflow automation for analytics and ML.</p>
             </div>
@@ -552,7 +730,7 @@ function App() {
                 
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-teal-600/20 rounded-lg flex items-center justify-center">
-                    <Phone className="text-teal-400" size={20} />
+                    <Phone className="text-blue-400" size={20} />
                   </div>
                   <div>
                     <p className="text-gray-400 text-sm">Phone</p>
@@ -562,7 +740,7 @@ function App() {
                 
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center">
-                    <MapPin className="text-purple-400" size={20} />
+                    <MapPin className="text-blue-400" size={20} />
                   </div>
                   <div>
                     <p className="text-gray-400 text-sm">Location</p>
