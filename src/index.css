@@ -2,24 +2,160 @@
 @tailwind components;
 @tailwind utilities;
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-    opacity: 0.3;
+:root {
+  --bg-primary: #050816;
+  --bg-secondary: #0a0f1e;
+  --bg-card: rgba(17, 24, 39, 0.6);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 40%, #22d3ee 100%);
+  --gradient-accent: linear-gradient(135deg, #22d3ee 0%, #34d399 100%);
+  --gradient-cta: linear-gradient(135deg, #6366f1 0%, #22d3ee 50%, #34d399 100%);
+  --glow-cyan: 0 0 30px rgba(34, 211, 238, 0.4);
+  --glow-purple: 0 0 30px rgba(139, 92, 246, 0.4);
+  --glass-bg: rgba(15, 23, 42, 0.65);
+  --glass-border: rgba(148, 163, 184, 0.12);
+  --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.light {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --bg-card: rgba(255, 255, 255, 0.8);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(15, 23, 42, 0.08);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
   }
-  50% {
-    transform: translateY(-20px);
-    opacity: 0.7;
+
+  body {
+    @apply font-sans antialiased;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color var(--transition-smooth), color var(--transition-smooth);
+  }
+
+  ::selection {
+    @apply bg-cyan-500/30 text-white;
   }
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+@layer components {
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-primary);
+    background-size: 200% auto;
+    animation: gradient-shift 6s ease infinite;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    @apply rounded-2xl;
   }
+
+  .glow-btn {
+    @apply relative overflow-hidden rounded-xl font-semibold transition-all duration-300;
+    background: var(--gradient-cta);
+    background-size: 200% auto;
+  }
+
+  .glow-btn:hover {
+    background-position: right center;
+    box-shadow: var(--glow-cyan);
+    @apply scale-[1.03];
+  }
+
+  .glow-btn::after {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    background-size: 200% 100%;
+  }
+
+  .glow-btn:hover::after {
+    @apply opacity-100;
+    animation: shimmer 1.5s ease infinite;
+  }
+
+  .nav-link {
+    @apply relative text-sm font-medium transition-colors duration-300;
+    color: var(--text-secondary);
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--text-primary);
+  }
+
+  .nav-link::after {
+    content: '';
+    @apply absolute -bottom-1 left-0 h-0.5 w-0 rounded-full transition-all duration-300;
+    background: var(--gradient-accent);
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    @apply w-full;
+  }
+
+  .section-heading {
+    @apply font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight;
+  }
+
+  .tech-badge {
+    @apply px-3 py-1 rounded-full text-xs font-medium border transition-all duration-300;
+  }
+
+  .skill-bar-fill {
+    @apply h-full rounded-full transition-all duration-1000 ease-out;
+    background: var(--gradient-accent);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-20px);
+    opacity: 0.8;
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-slate-700;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-600;
 }
