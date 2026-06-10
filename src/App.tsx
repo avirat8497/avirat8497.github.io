@@ -30,7 +30,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden bg-black">
       <Navbar
         activeSection={activeSection}
         onNavigate={scrollTo}

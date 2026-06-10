@@ -6,13 +6,13 @@ import { SectionHeading } from './SectionHeading';
 import { ScrollReveal } from './ScrollReveal';
 
 const techColors: Record<string, string> = {
-  Python: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
-  TensorFlow: 'bg-orange-500/20 text-orange-300 border-orange-500/30',
-  NLP: 'bg-violet-500/20 text-violet-300 border-violet-500/30',
-  Flask: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-  'Scikit-learn': 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-  'Apache Kafka': 'bg-red-500/20 text-red-300 border-red-500/30',
-  Docker: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
+  Python: 'bg-blue-900/30 text-blue-300 border-blue-800/40',
+  TensorFlow: 'bg-orange-900/30 text-orange-300 border-orange-800/40',
+  NLP: 'bg-violet-900/30 text-violet-300 border-violet-800/40',
+  Flask: 'bg-emerald-900/30 text-emerald-300 border-emerald-800/40',
+  'Scikit-learn': 'bg-amber-900/30 text-amber-300 border-amber-800/40',
+  'Apache Kafka': 'bg-red-900/30 text-red-300 border-red-800/40',
+  Docker: 'bg-cyan-900/30 text-cyan-300 border-cyan-800/40',
 };
 
 export function Projects() {
@@ -24,83 +24,82 @@ export function Projects() {
       : projects.filter((p) => p.category === activeFilter);
 
   return (
-    <section id="projects" className="py-24 px-4 sm:px-6 lg:px-8 relative">
-      <div
-        className="absolute inset-0 opacity-30"
-        style={{
-          background:
-            'radial-gradient(ellipse at 20% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 50%)',
-        }}
-      />
+    <section id="projects" className="section-padding relative bg-[var(--bg-tertiary)]">
       <div className="max-w-7xl mx-auto relative">
         <SectionHeading title="Featured Projects" />
 
         <ScrollReveal>
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
             {projectCategories.map((cat) => (
-              <motion.button
+              <button
                 key={cat}
                 onClick={() => setActiveFilter(cat)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 border ${
+                className={`filter-pill ${activeFilter === cat ? 'active' : ''}`}
+                style={
                   activeFilter === cat
-                    ? 'border-violet-500/50 bg-violet-500/10 text-violet-300 shadow-[var(--glow-purple)]'
-                    : 'border-[var(--glass-border)] text-[var(--text-secondary)] hover:border-violet-500/30'
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                    ? { borderColor: 'rgba(168,85,247,0.4)', color: 'var(--accent-purple)', boxShadow: 'var(--glow-purple)' }
+                    : undefined
+                }
               >
                 {cat}
-              </motion.button>
+              </button>
             ))}
           </div>
         </ScrollReveal>
 
-        <motion.div className="grid md:grid-cols-2 gap-8" layout>
-          <AnimatePresence mode="popLayout">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeFilter}
+            className="grid md:grid-cols-2 gap-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+          >
             {filtered.map((project, index) => (
               <motion.div
                 key={project.title}
-                layout
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="group glass-card overflow-hidden"
-                whileHover={{ boxShadow: 'var(--glow-cyan)' }}
+                transition={{
+                  duration: 0.5,
+                  delay: index * 0.12,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                }}
+                className="group glass-card overflow-hidden card-hover-lift"
               >
-                <div className="relative h-52 overflow-hidden">
+                <div className="relative h-44 overflow-hidden">
                   <img
                     src={project.image}
                     alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)] via-transparent to-transparent opacity-80" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90" />
 
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-[var(--bg-primary)]/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400 flex items-center justify-center gap-4">
+                  <div className="absolute inset-0 bg-black/70 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-4">
                     <a
                       href={project.github}
-                      className="p-3 rounded-full glass-card hover:scale-110 transition-transform"
+                      className="p-3 rounded-full glass-card hover:scale-110 transition-transform duration-200"
                       aria-label={`${project.title} GitHub`}
                     >
                       <Github size={20} />
                     </a>
                     <a
                       href={project.demo}
-                      className="p-3 rounded-full glass-card hover:scale-110 transition-transform"
+                      className="p-3 rounded-full glass-card hover:scale-110 transition-transform duration-200"
                       aria-label={`${project.title} live demo`}
                     >
                       <ExternalLink size={20} />
                     </a>
                   </div>
 
-                  <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium bg-violet-500/30 text-violet-300 border border-violet-500/40">
+                  <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium bg-purple-900/40 text-purple-300 border border-purple-800/40">
                     {project.category}
                   </span>
                 </div>
 
-                <div className="p-6">
-                  <h3 className="font-display text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors">
+                <div className="p-5">
+                  <h3 className="card-title mb-2 group-hover:text-[var(--accent-cyan)] transition-colors duration-300">
                     {project.title}
                   </h3>
                   <p className="text-[var(--text-secondary)] text-sm mb-4 leading-relaxed line-clamp-3">
@@ -110,7 +109,7 @@ export function Projects() {
                     {project.tech.map((tech) => (
                       <span
                         key={tech}
-                        className={`tech-badge border ${techColors[tech] ?? 'bg-slate-500/20 text-slate-300 border-slate-500/30'}`}
+                        className={`tech-badge border ${techColors[tech] ?? 'bg-slate-800/40 text-slate-300 border-slate-700/40'}`}
                       >
                         {tech}
                       </span>
@@ -119,8 +118,8 @@ export function Projects() {
                 </div>
               </motion.div>
             ))}
-          </AnimatePresence>
-        </motion.div>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </section>
   );

@@ -13,12 +13,12 @@ interface Particle {
 export function ParticlesBackground() {
   const particles = useMemo<Particle[]>(
     () =>
-      Array.from({ length: 30 }, (_, i) => ({
+      Array.from({ length: 20 }, (_, i) => ({
         id: i,
         x: Math.random() * 100,
         y: Math.random() * 100,
-        size: Math.random() * 3 + 1,
-        duration: 5 + Math.random() * 8,
+        size: Math.random() * 2 + 0.5,
+        duration: 6 + Math.random() * 8,
         delay: Math.random() * 5,
       })),
     []
@@ -29,17 +29,15 @@ export function ParticlesBackground() {
       {particles.map((p) => (
         <motion.div
           key={p.id}
-          className="absolute rounded-full bg-cyan-400/30"
+          className="absolute rounded-full"
           style={{
             left: `${p.x}%`,
             top: `${p.y}%`,
             width: p.size,
             height: p.size,
+            background: 'rgba(0, 217, 255, 0.15)',
           }}
-          animate={{
-            y: [0, -30, 0],
-            opacity: [0.2, 0.7, 0.2],
-          }}
+          animate={{ y: [0, -20, 0], opacity: [0.1, 0.4, 0.1] }}
           transition={{
             duration: p.duration,
             repeat: Infinity,
@@ -49,22 +47,19 @@ export function ParticlesBackground() {
         />
       ))}
 
-      {/* Geometric grid overlay */}
       <div
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 opacity-[0.02]"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(34, 211, 238, 0.5) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(34, 211, 238, 0.5) 1px, transparent 1px)
+            linear-gradient(rgba(0, 217, 255, 0.4) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 217, 255, 0.4) 1px, transparent 1px)
           `,
-          backgroundSize: '60px 60px',
+          backgroundSize: '80px 80px',
         }}
       />
 
-      {/* Gradient orbs */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-violet-600/20 rounded-full blur-3xl animate-float" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-600/15 rounded-full blur-3xl animate-float-slow" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-3xl" />
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-purple-900/10 rounded-full blur-3xl" />
+      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-900/8 rounded-full blur-3xl" />
     </div>
   );
 }

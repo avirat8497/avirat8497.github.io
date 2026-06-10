@@ -23,11 +23,11 @@ export function Footer({ onNavigate }: FooterProps) {
   }, []);
 
   return (
-    <footer className="relative border-t border-[var(--glass-border)] py-12 px-4 sm:px-6 lg:px-8">
+    <footer className="relative border-t border-[var(--glass-border)] py-10 px-4 sm:px-5 lg:px-6 bg-black">
       <div
-        className="absolute inset-0 opacity-30"
+        className="absolute inset-0 opacity-20"
         style={{
-          background: 'linear-gradient(to top, rgba(99, 102, 241, 0.05), transparent)',
+          background: 'linear-gradient(to top, rgba(76, 29, 149, 0.08), transparent)',
         }}
       />
       <div className="max-w-7xl mx-auto relative">
@@ -46,7 +46,7 @@ export function Footer({ onNavigate }: FooterProps) {
                 <button
                   key={item.id}
                   onClick={() => onNavigate(item.id)}
-                  className="text-sm text-[var(--text-muted)] hover:text-cyan-400 transition-colors duration-300"
+                  className="text-sm text-[var(--text-muted)] hover:text-[var(--accent-cyan)] transition-colors duration-300"
                 >
                   {item.label}
                 </button>
@@ -65,11 +65,11 @@ export function Footer({ onNavigate }: FooterProps) {
                     href={href}
                     target={icon !== 'mail' ? '_blank' : undefined}
                     rel={icon !== 'mail' ? 'noopener noreferrer' : undefined}
-                    className="w-10 h-10 glass-card flex items-center justify-center hover:shadow-[var(--glow-cyan)] transition-all"
+                    className="w-10 h-10 glass-card flex items-center justify-center"
                     aria-label={label}
-                    whileHover={{ scale: 1.1, y: -2 }}
+                    whileHover={{ scale: 1.1, y: -2, boxShadow: 'var(--glow-cyan)' }}
                   >
-                    <Icon size={16} className="text-cyan-400" />
+                    <Icon size={16} className="text-[var(--accent-cyan)]" />
                   </motion.a>
                 );
               })}
@@ -90,13 +90,14 @@ export function Footer({ onNavigate }: FooterProps) {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
             onClick={() => onNavigate('home')}
-            className="fixed bottom-8 right-8 w-12 h-12 rounded-full glass-card flex items-center justify-center hover:shadow-[var(--glow-cyan)] transition-all z-40"
+            className="fixed bottom-8 right-8 w-12 h-12 rounded-full glass-card flex items-center justify-center z-40"
             aria-label="Scroll to top"
-            whileHover={{ scale: 1.1, y: -2 }}
+            whileHover={{ scale: 1.1, y: -2, boxShadow: 'var(--glow-cyan)' }}
             whileTap={{ scale: 0.95 }}
           >
-            <ArrowUp size={20} className="text-cyan-400" />
+            <ArrowUp size={20} className="text-[var(--accent-cyan)]" />
           </motion.button>
         )}
       </AnimatePresence>
